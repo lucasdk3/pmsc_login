@@ -1,0 +1,9 @@
+{
+    "componentMicroCommons": "micro_commons",
+    "divider": "_",
+    "prefixMicroCommons": "flut",
+    "componentMicroCore": "micro_core",
+    "prefixMicroCore": "flut",
+    "componentBaseApp": "base_app",
+    "prefixBaseApp": "flut"
+}
