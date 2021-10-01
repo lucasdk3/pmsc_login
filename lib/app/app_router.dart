@@ -24,16 +24,32 @@ class AppRouter {
     navigationKey = GlobalKey<NavigatorState>();
   }
 
-  Future<dynamic> off(String _rn) {
-    return navigationKey!.currentState!.pushReplacementNamed(_rn);
+  Future off(String pageView, {Object? arguments}) {
+    return navigationKey!.currentState!
+        .pushReplacementNamed(pageView, arguments: arguments);
   }
 
-  Future<dynamic> to(String _rn) {
-    return navigationKey!.currentState!.pushNamed(_rn);
+  Future to(String routeNamed, {Object? arguments}) {
+    return navigationKey!.currentState!
+        .pushNamed(routeNamed, arguments: arguments);
   }
 
-  Future<dynamic> navigateToRoute(MaterialPageRoute _rn) {
+  Future navigateToRoute(MaterialPageRoute _rn) {
     return navigationKey!.currentState!.push(_rn);
+  }
+
+  Future push(BuildContext context, Widget widget) async {
+    return navigationKey!.currentState!
+        .push(MaterialPageRoute(builder: (_) => widget));
+  }
+
+  Future pushMaterial(BuildContext context, material) async {
+    return navigationKey!.currentState!.push(material);
+  }
+
+  Future pushAndRelaceToPage(BuildContext context, Widget widget) async {
+    return navigationKey!.currentState!
+        .pushReplacement(MaterialPageRoute(builder: (_) => widget));
   }
 
   pop() {

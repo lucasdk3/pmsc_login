@@ -1,6 +1,8 @@
 name: pmsc_auth
 description: A new Flutter project.
+
 publish_to: 'none' 
+
 version: 1.0.0+1
 
 environment:
@@ -11,14 +13,14 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.2
   flutter_bloc: ^7.1.0
-  dartz: ^0.10.0
+  dartz: ^0.10.0-nullsafety.2
   equatable: ^2.0.3 
   google_fonts: ^2.1.0
   fluttertoast: ^8.0.8
   local_auth: ^1.1.8
   dio: ^4.0.0
   http: ^0.13.3
-  flutter_secure_storage: ^4.2.1
+  localstorage: ^4.0.0+1
 
 dev_dependencies:
   flutter_test:
@@ -30,3 +32,5 @@ flutter:
 
   uses-material-design: true
 
+  assets:
+    - assets/

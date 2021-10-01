@@ -174,13 +174,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.3"
-  flutter_secure_storage:
-    dependency: "direct main"
-    description:
-      name: flutter_secure_storage
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.2.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -275,6 +268,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.8"
+  localstorage:
+    dependency: "direct main"
+    description:
+      name: localstorage
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.0.0+1"
   logging:
     dependency: transitive
     description:

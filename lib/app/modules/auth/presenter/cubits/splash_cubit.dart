@@ -1,17 +1,19 @@
 import '../../../../../exports_pmsc.dart';
 
-enum SplashState { init, loading }
+enum SplashState { init, loading, success, error }
 
 class SplashCubit extends Cubit<SplashState> {
   SplashCubit(this._storage) : super(SplashState.init);
 
   final IStorageService _storage;
 
-  void verifyAuth() async {
-    emit(SplashState.loading);
-    await _storage.getToken() == null &&
-            await _storage.getRefreshToken() == null
-        ? AppRouter.instance.to('auth')
-        : AppRouter.instance.to('base');
+  Future<void> init() async {
+    await Future.delayed(const Duration(seconds: 1), () {
+      if (_storage.getToken() == null && _storage.getRefreshToken() == null) {
+        emit(SplashState.error);
+      } else {
+        emit(SplashState.success);
+      }
+    });
   }
 }

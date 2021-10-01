@@ -7,17 +7,11 @@ class AppProviders extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: buildProviders(),
+      providers: [
+        BlocProvider(create: (context) => SplashCubit(context.read())..init()),
+        BlocProvider(create: (context) => AuthCubit())
+      ],
       child: const AppWidget(),
     );
   }
 }
-
-List<BlocProvider> buildProviders() => [
-      BlocProvider(
-          create: (BuildContext context) =>
-              SplashCubit(context.read())..verifyAuth()),
-      BlocProvider(
-          create: (BuildContext context) =>
-              AuthCubit(context.read(), context.read(), context.read()))
-    ];
