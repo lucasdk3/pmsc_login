@@ -1,8 +1,9 @@
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_auth/local_auth.dart';
 import '../../../../../exports_pmsc.dart';
 
 abstract class IAuthWithFingerUseCase {
-  Future<void> call();
+  Future<bool> call();
 }
 
 class AuthWithFingerUseCase extends IAuthWithFingerUseCase {
@@ -11,7 +12,7 @@ class AuthWithFingerUseCase extends IAuthWithFingerUseCase {
 
   AuthWithFingerUseCase(this._storage, this._repository);
   @override
-  Future<void> call() async {
+  Future<bool> call() async {
     final localAuth = LocalAuthentication();
     bool isValid = await localAuth.authenticate(
         localizedReason: 'Please authenticate com sua digital',
@@ -19,10 +20,20 @@ class AuthWithFingerUseCase extends IAuthWithFingerUseCase {
         stickyAuth: true,
         biometricOnly: true);
     if (isValid) {
-      final auth = AuthEntity(
-          registration: await _storage.getRegistration() ?? '',
-          password: await _storage.getPassword() ?? '');
-      final result = _repository.call();
-    } else {}
+      final entity = AuthEntity(
+          registration: _storage.getRegistration() ?? '',
+          password: _storage.getPassword() ?? '');
+      final result = await _repository.call(entity: entity);
+      return result.fold((l) {
+        Fluttertoast.showToast(msg: 'Erro no login');
+        return false;
+      }, (r) {
+        _storage.setRegistration(registration: entity.registration);
+        _storage.setPassword(password: entity.password);
+        return true;
+      });
+    } else {
+      return false;
+    }
   }
 }

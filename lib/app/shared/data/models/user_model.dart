@@ -21,3 +21,13 @@ class UserModel extends UserEntity {
   @override
   bool? get stringify => true;
 }
+
+extension UserEntityToModel on UserEntity {
+  UserModel get toModel => UserModel(
+      registration: registration, token: token, refreshToken: refreshToken);
+}
+
+extension UserModelToEntity on UserModel {
+  UserEntity get toEntity => UserEntity(
+      registration: registration, token: token, refreshToken: refreshToken);
+}

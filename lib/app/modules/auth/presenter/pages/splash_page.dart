@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'package:progress_indicators/progress_indicators.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../../exports_pmsc.dart';
 
 class SplashPage extends StatelessWidget {
@@ -17,6 +18,25 @@ class SplashPage extends StatelessWidget {
             null;
           }
         },
-        child: Container());
+        child: Scaffold(
+          backgroundColor: background,
+          body: Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                const Logo(),
+                FadingText(
+                  'Carregando...',
+                  style: GoogleFonts.poppins(
+                      textStyle: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  )),
+                ),
+              ],
+            ),
+          ),
+        ));
   }
 }

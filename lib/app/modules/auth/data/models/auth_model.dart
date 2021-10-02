@@ -14,3 +14,13 @@ class AuthModel extends AuthEntity {
   @override
   bool? get stringify => true;
 }
+
+extension AuthEntityToModel on AuthEntity {
+  AuthModel get toModel =>
+      AuthModel(registration: registration, password: password);
+}
+
+extension AuthModelToEntity on AuthModel {
+  AuthEntity get toEntity =>
+      AuthEntity(registration: registration, password: password);
+}

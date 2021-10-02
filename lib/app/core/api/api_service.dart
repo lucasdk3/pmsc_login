@@ -4,17 +4,33 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../../../exports_pmsc.dart';
 
-abstract class IApiService {}
+abstract class IApiService {
+  Map<String, dynamic> header() => throw UnimplementedError();
+
+  bool get enableMockResponse => false;
+
+  String get token => throw UnimplementedError();
+
+  String get baseUrl => throw UnimplementedError();
+
+  Map<String, dynamic> get customHeaderParam => throw UnimplementedError();
+
+  Future<ApiResponse<T>> get<T>({required ApiRequest apiRequest});
+
+  Future<ApiResponse<T>> post<T>({required ApiRequest apiRequest});
+
+  Future<ApiResponse<T>> put<T>({required ApiRequest apiRequest});
+}
 
 class ApiService extends IApiService {
   final Dio _dio;
-  final StorageService _storage;
+  final IStorageService _storage;
 
   ApiService(this._dio, this._storage);
 
   ///Configura a otilizacao da api para fazer requisicao
   Future<Dio> getApiClient(String app, String? url) async {
-    final token = await _storage.getToken();
+    final token = _storage.getToken();
     var baseUrl = (url ?? ConfigService.baseUrl);
     try {
       _dio.interceptors.clear();
@@ -95,6 +111,147 @@ class ApiService extends IApiService {
         'accept': 'application/json',
         'Authorization': 'Bearer $token',
       };
+    }
+  }
+
+  @override
+  Future<ApiResponse<T>> get<T>({required ApiRequest apiRequest}) async {
+    if (!apiRequest.deleteOnError ||
+        (enableMockResponse && apiRequest.mockSimulate != null)) {
+      return _mockSimulate(apiRequest);
+    }
+    try {
+      final response = await _dio.get(apiRequest.path,
+          queryParameters: apiRequest.queryParameters,
+          onReceiveProgress: apiRequest.onSendProgress);
+      return _bodySuccessOnResponse(apiRequest, response);
+    } on DioError catch (error) {
+      return _bodyDioErrorOnResponse(error, apiRequest);
+    } on Exception catch (error) {
+      return _bodyErrorOnResponse(error, apiRequest);
+    }
+  }
+
+  @override
+  Future<ApiResponse<T>> post<T>({required ApiRequest apiRequest}) async {
+    if (!apiRequest.deleteOnError ||
+        (enableMockResponse && apiRequest.mockSimulate != null)) {
+      return _mockSimulate(apiRequest);
+    }
+    try {
+      final response = await _dio.post(apiRequest.path,
+          data: apiRequest.body,
+          queryParameters: apiRequest.queryParameters,
+          onReceiveProgress: apiRequest.onSendProgress,
+          onSendProgress: apiRequest.onReceiveProgress);
+      return _bodySuccessOnResponse(apiRequest, response);
+    } on DioError catch (error) {
+      return _bodyDioErrorOnResponse(error, apiRequest);
+    } on Exception catch (error) {
+      return _bodyErrorOnResponse(error, apiRequest);
+    }
+  }
+
+  @override
+  Future<ApiResponse<T>> put<T>({required ApiRequest apiRequest}) async {
+    if (!apiRequest.deleteOnError ||
+        (enableMockResponse && apiRequest.mockSimulate != null)) {
+      return _mockSimulate(apiRequest);
+    }
+    try {
+      final response = await _dio.put(apiRequest.path,
+          data: apiRequest.body,
+          queryParameters: apiRequest.queryParameters,
+          onReceiveProgress: apiRequest.onSendProgress,
+          onSendProgress: apiRequest.onReceiveProgress);
+      return _bodySuccessOnResponse(apiRequest, response);
+    } on DioError catch (error) {
+      return _bodyDioErrorOnResponse(error, apiRequest);
+    } on Exception catch (error) {
+      return _bodyErrorOnResponse(error, apiRequest);
+    }
+  }
+
+  @override
+  Map<String, dynamic> header({String token = ''}) {
+    final header = token.isEmpty
+        ? <String, dynamic>{'content-type': 'application/json;charset=utf-8'}
+        : <String, dynamic>{
+            'content-type': 'application/json;charset=utf-8',
+            'Authorization': 'Bearer $token',
+          };
+    header.addAll(customHeaderParam);
+    return header;
+  }
+
+  ApiResponse<T> _bodyErrorOnResponse<T>(
+      Exception error, ApiRequest apiRequest) {
+    final response =
+        ApiResponse<T>(statusCode: 500, errorBody: error, request: apiRequest);
+    return response;
+  }
+
+  ApiResponse<T> _bodyDioErrorOnResponse<T>(
+      DioError error, ApiRequest apiRequest) {
+    final response = ApiResponse<T>(
+        statusCode: error.response?.statusCode ?? 500,
+        errorBody: error.response?.data ??
+            error.error ??
+            error.message ??
+            error.stackTrace,
+        request: apiRequest);
+    return response;
+  }
+
+  ApiResponse<T> _bodySuccessOnResponse<T>(
+      ApiRequest apiRequest, Response<dynamic> response) {
+    var resultData;
+    try {
+      if (apiRequest.tryParse != null) {
+        resultData = apiRequest.tryParse?.call(response.data) as T?;
+      } else {
+        resultData = response.data;
+      }
+    } catch (e) {
+      resultData = response.data;
+    }
+    if (resultData is T) {
+      return ApiResponse<T>(
+          statusCode: response.statusCode ?? 500,
+          body: response.data,
+          request: apiRequest);
+    } else {
+      return ApiResponse<T>(
+          statusCode: response.statusCode ?? 500, errorBody: response.data);
+    }
+  }
+
+  ApiResponse<T> _mockSimulate<T>(ApiRequest apiRequest) {
+    debugPrint(
+        '================================Request simulated=======================================================');
+    debugPrint('Path simulated => ${apiRequest.path}');
+    debugPrint('Body simulated => ${apiRequest.mockSimulate?.body}');
+    debugPrint(
+        '================================Request simulated=======================================================');
+    var resultData;
+    if (apiRequest.tryParse != null) {
+      resultData =
+          apiRequest.tryParse?.call(apiRequest.mockSimulate?.body ?? {}) as T?;
+    } else {
+      resultData = apiRequest.mockSimulate?.body ?? {};
+    }
+    if (resultData is T) {
+      return ApiResponse<T>(
+          statusCode: apiRequest.mockSimulate?.statusCode ?? 500,
+          body: resultData,
+          errorBody: apiRequest.mockSimulate?.errorBody,
+          request: apiRequest);
+    } else {
+      return ApiResponse<T>(
+        statusCode: apiRequest.mockSimulate?.statusCode ?? 500,
+        errorBody: resultData,
+        request: apiRequest,
+      );
     }
   }
 }

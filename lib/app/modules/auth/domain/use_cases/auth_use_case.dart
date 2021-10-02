@@ -1,7 +1,9 @@
+import 'package:fluttertoast/fluttertoast.dart';
+
 import '../../../../../exports_pmsc.dart';
 
 abstract class IAuthUseCase {
-  Future<void> call(AuthEntity entity);
+  Future<bool> call(AuthEntity entity);
 }
 
 class AuthUseCase extends IAuthUseCase {
@@ -10,12 +12,20 @@ class AuthUseCase extends IAuthUseCase {
 
   AuthUseCase(this._storage, this._repository);
   @override
-  Future<void> call(AuthEntity entity) async {
+  Future<bool> call(AuthEntity entity) async {
     final isValid = AuthValidate.call(entity.registration, entity.password);
     if (isValid) {
-      final result = _repository.call();
-      _storage.setRegistration(registration: entity.registration);
-      _storage.setPassword(password: entity.password);
-    } else {}
+      final result = await _repository.call(entity: entity);
+      return result.fold((l) {
+        Fluttertoast.showToast(msg: 'Erro no login');
+        return false;
+      }, (r) {
+        _storage.setRegistration(registration: entity.registration);
+        _storage.setPassword(password: entity.password);
+        return true;
+      });
+    } else {
+      return false;
+    }
   }
 }

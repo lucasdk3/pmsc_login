@@ -9,7 +9,9 @@ class AppProviders extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => SplashCubit(context.read())..init()),
-        BlocProvider(create: (context) => AuthCubit())
+        BlocProvider(
+            create: (context) =>
+                AuthCubit(context.read(), context.read(), context.read()))
       ],
       child: const AppWidget(),
     );

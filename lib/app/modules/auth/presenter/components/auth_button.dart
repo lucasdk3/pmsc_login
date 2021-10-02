@@ -10,7 +10,11 @@ class AuthButton extends StatelessWidget {
     final state = context.watch<AuthCubit>().state;
     final isLoading = state == AuthState.loading;
     final width = !isLoading ? 0.64 : 0.8;
-    return Builder(builder: (context) {
+    return BlocConsumer<AuthCubit, AuthState>(listener: (context, state) {
+      if (state == AuthState.success) {
+        AppRouter.instance.to('/base');
+      }
+    }, builder: (context, state) {
       return state == AuthState.loading
           ? const Center(child: CircularProgressIndicator())
           : MaterialButton(
@@ -38,7 +42,7 @@ class AuthButton extends StatelessWidget {
               ),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(12),
+                      topLeft: const Radius.circular(12),
                       bottomRight: Radius.circular(!isLoading ? 0 : 12))),
               onPressed: () => cubit.auth());
     });

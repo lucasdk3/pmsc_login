@@ -1,3 +1,3 @@
 class ConfigService {
-  static String baseUrl = '';
+  static const String baseUrl = '';
 }
