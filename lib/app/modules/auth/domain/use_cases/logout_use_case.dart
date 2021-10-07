@@ -1,7 +1,7 @@
 import '../../../../../exports_pmsc.dart';
 
 abstract class ILogoutUseCase {
-  Future<void> call();
+  Future<void> call({required Function toLogin});
 }
 
 class LogoutUseCase extends ILogoutUseCase {
@@ -9,7 +9,8 @@ class LogoutUseCase extends ILogoutUseCase {
 
   LogoutUseCase(this._storage);
   @override
-  Future<void> call() async {
-    AppRouter.instance.to('/auth');
+  Future<void> call({required Function toLogin}) async {
+    toLogin();
+    _storage.clear();
   }
 }

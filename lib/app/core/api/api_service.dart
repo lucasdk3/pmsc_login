@@ -57,7 +57,7 @@ class ApiService extends IApiService {
           if (kDebugMode) {
             print("refresh token");
           }
-          final refreshToken = await _storage.getRefreshToken();
+          final refreshToken = _storage.getRefreshToken();
           RequestOptions? options = error.response?.requestOptions;
           final header = getHeaderToken(token: refreshToken);
           options?.headers = header;
@@ -205,6 +205,7 @@ class ApiService extends IApiService {
 
   ApiResponse<T> _bodySuccessOnResponse<T>(
       ApiRequest apiRequest, Response<dynamic> response) {
+    // ignore: prefer_typing_uninitialized_variables
     var resultData;
     try {
       if (apiRequest.tryParse != null) {

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../../../exports_pmsc.dart';
 
-enum AuthState { init, success, error, loading }
-
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit(this._authUseCase, this._authWithFingerUseCase, this._logoutUseCase)
-      : super(AuthState.init);
+      : super(AuthInit());
 
   final IAuthUseCase _authUseCase;
   final IAuthWithFingerUseCase _authWithFingerUseCase;
@@ -14,24 +12,24 @@ class AuthCubit extends Cubit<AuthState> {
   final registrationController = TextEditingController();
   final passwordController = TextEditingController();
 
-  void auth() async {
-    emit(AuthState.loading);
+  Future<void> auth() async {
+    emit(AuthLoading());
     final registration = registrationController.text;
     final password = passwordController.text;
-    final result = await _authUseCase
-        .call(AuthEntity(registration: registration, password: password));
-    result ? emit(AuthState.success) : emit(AuthState.error);
+    final result = await _authUseCase.call(
+        entity: AuthEntity(registration: registration, password: password));
+    result == null ? emit(AuthSuccess()) : emit(AuthError(result));
   }
 
-  void authWithFinger() async {
-    emit(AuthState.loading);
+  Future<void> authWithFinger() async {
+    emit(AuthLoading());
     final result = await _authWithFingerUseCase.call();
-    result ? emit(AuthState.success) : emit(AuthState.error);
+    result ? emit(AuthSuccess()) : emit(AuthError('error'));
   }
 
-  void logout() async {
-    emit(AuthState.loading);
-    _logoutUseCase.call();
-    emit(AuthState.init);
+  Future<void> logout(Function toLogin) async {
+    emit(AuthLoading());
+    _logoutUseCase.call(toLogin: toLogin);
+    emit(AuthInit());
   }
 }

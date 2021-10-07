@@ -1,3 +1,4 @@
+// coverage:ignore-file
 import 'package:flutter/material.dart';
 import '../../../../../exports_pmsc.dart';
 
@@ -9,7 +10,7 @@ class FingerButton extends StatelessWidget {
     final cubit = context.read<AuthCubit>();
     final state = context.watch<AuthCubit>().state;
     return Visibility(
-      visible: state != AuthState.loading,
+      visible: state != AuthLoading(),
       child: MaterialButton(
           height: 46,
           minWidth: MediaQuery.of(context).size.width * 0.12,

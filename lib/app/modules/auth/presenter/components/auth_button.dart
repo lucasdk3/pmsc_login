@@ -1,21 +1,23 @@
+// coverage:ignore-file
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../../../../../exports_pmsc.dart';
 
-class AuthButton extends StatelessWidget {
-  const AuthButton({Key? key}) : super(key: key);
+class AuthButton extends BlocView<AuthCubit, AuthState> {
+  AuthButton({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<AuthCubit>();
-    final state = context.watch<AuthCubit>().state;
-    final isLoading = state == AuthState.loading;
+    final isLoading = state == AuthLoading();
     final width = !isLoading ? 0.64 : 0.8;
     return BlocConsumer<AuthCubit, AuthState>(listener: (context, state) {
-      if (state == AuthState.success) {
+      if (state == AuthSuccess()) {
         AppRouter.instance.to('/base');
+      } else if (state is AuthError) {
+        Fluttertoast.showToast(msg: state.error);
       }
     }, builder: (context, state) {
-      return state == AuthState.loading
+      return state == AuthLoading()
           ? const Center(child: CircularProgressIndicator())
           : MaterialButton(
               height: 46,
@@ -44,7 +46,7 @@ class AuthButton extends StatelessWidget {
                   borderRadius: BorderRadius.only(
                       topLeft: const Radius.circular(12),
                       bottomRight: Radius.circular(!isLoading ? 0 : 12))),
-              onPressed: () => cubit.auth());
+              onPressed: () => bloc.auth());
     });
   }
 }

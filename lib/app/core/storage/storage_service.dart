@@ -1,7 +1,9 @@
+// coverage:ignore-file
 import 'package:localstorage/localstorage.dart';
 import 'package:pmsc_auth/exports_pmsc.dart';
 
 abstract class IStorageService {
+  Future<void> clear();
   Future<void> setToken({required String token});
   Future<void> setRefreshToken({required String refreshToken});
   Future<void> setRegistration({required String registration});
@@ -13,8 +15,16 @@ abstract class IStorageService {
 }
 
 class StorageService implements IStorageService {
+  final String? storageKey;
   final encrypt = Encrypt();
-  final _storage = LocalStorage('MKTP');
+  late LocalStorage _storage;
+
+  StorageService({this.storageKey}) {
+    _storage = LocalStorage(storageKey ?? 'PMSC');
+  }
+
+  @override
+  Future<void> clear() async => await _storage.clear();
 
   @override
   String? getRefreshToken() => _storage.getItem('refresh_token');

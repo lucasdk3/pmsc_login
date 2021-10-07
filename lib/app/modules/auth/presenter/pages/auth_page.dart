@@ -1,12 +1,11 @@
+// coverage:ignore-file
 import 'package:flutter/material.dart';
 import '../../../../../exports_pmsc.dart';
 
-class AuthPage extends StatelessWidget {
-  const AuthPage({Key? key}) : super(key: key);
-
+class AuthPage extends BlocView<AuthCubit, AuthState> {
+  AuthPage({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<AuthCubit>();
     return Scaffold(
       backgroundColor: background,
       body: Stack(
@@ -41,10 +40,10 @@ class AuthPage extends StatelessWidget {
                               height: MediaQuery.of(context).size.height * 0.1,
                             ),
                             Field(
-                                controller: cubit.registrationController,
+                                controller: bloc.registrationController,
                                 field: 'Matricula'),
                             Field(
-                                controller: cubit.passwordController,
+                                controller: bloc.passwordController,
                                 field: 'Senha'),
                             SizedBox(
                               height: MediaQuery.of(context).size.height * 0.04,
@@ -57,7 +56,7 @@ class AuthPage extends StatelessWidget {
                                   width: MediaQuery.of(context).size.height *
                                       0.002,
                                 ),
-                                const AuthButton()
+                                AuthButton()
                               ],
                             ),
                           ],

@@ -1,3 +1,4 @@
+// coverage:ignore-file
 import 'package:flutter/material.dart';
 
 import '../../../../../exports_pmsc.dart';
@@ -19,7 +20,9 @@ class BasePage extends StatelessWidget {
           children: [
             Center(
               child: ElevatedButton(
-                  onPressed: () => cubit.logout(), child: const Text('Sair')),
+                  onPressed: () =>
+                      cubit.logout(() => AppRouter.instance.to('/auth')),
+                  child: const Text('Sair')),
             )
           ],
         ),

@@ -25,8 +25,8 @@ class ColorApp {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          const Color(0xFF5153b7),
-          const Color(0xFF3E4095),
+          Color(0xFF5153b7),
+          Color(0xFF3E4095),
         ],
       );
 
@@ -45,8 +45,8 @@ class ColorApp {
         colors: [
           //const Color(0xFFf44336),
           //Colors.redAccent,
-          const Color(0xFF387673),
-          const Color(0xFF325a57),
+          Color(0xFF387673),
+          Color(0xFF325a57),
         ],
       );
 }

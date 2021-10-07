@@ -12,47 +12,54 @@ class AppRouter {
   static Map<String, Widget Function(BuildContext)> routes =
       <String, WidgetBuilder>{
     '/': (BuildContext context) => const SplashPage(),
-    '/auth': (BuildContext context) => const AuthPage(),
+    '/auth': (BuildContext context) => AuthPage(),
     '/base': (BuildContext context) => const BasePage(),
   };
 
-  GlobalKey<NavigatorState>? navigationKey;
+  late GlobalKey<NavigatorState> navigationKey;
 
   static AppRouter instance = AppRouter();
+
+  static BuildContext? context =
+      AppRouter.instance.navigationKey.currentContext;
 
   AppRouter() {
     navigationKey = GlobalKey<NavigatorState>();
   }
 
   Future off(String pageView, {Object? arguments}) {
-    return navigationKey!.currentState!
+    return navigationKey.currentState!
         .pushReplacementNamed(pageView, arguments: arguments);
   }
 
   Future to(String routeNamed, {Object? arguments}) {
-    return navigationKey!.currentState!
+    return navigationKey.currentState!
         .pushNamed(routeNamed, arguments: arguments);
   }
 
   Future navigateToRoute(MaterialPageRoute _rn) {
-    return navigationKey!.currentState!.push(_rn);
+    return navigationKey.currentState!.push(_rn);
   }
 
   Future push(BuildContext context, Widget widget) async {
-    return navigationKey!.currentState!
+    return navigationKey.currentState!
         .push(MaterialPageRoute(builder: (_) => widget));
   }
 
   Future pushMaterial(BuildContext context, material) async {
-    return navigationKey!.currentState!.push(material);
+    return navigationKey.currentState!.push(material);
   }
 
   Future pushAndRelaceToPage(BuildContext context, Widget widget) async {
-    return navigationKey!.currentState!
+    return navigationKey.currentState!
         .pushReplacement(MaterialPageRoute(builder: (_) => widget));
   }
 
   pop() {
-    return navigationKey!.currentState!.pop();
+    return navigationKey.currentState!.pop();
   }
+}
+
+extension GetContext on AppRouter {
+  BuildContext? get context => AppRouter.instance.navigationKey.currentContext;
 }

@@ -1,15 +1,11 @@
-import 'package:fluttertoast/fluttertoast.dart';
-
 class AuthValidate {
-  static bool call(String? auth, String? password) {
-    if (auth == null || auth.length != 8) {
-      Fluttertoast.showToast(msg: 'Mátricula inválida');
-      return false;
-    } else if (password == null) {
-      Fluttertoast.showToast(msg: 'Senha inválida');
-      return false;
+  static String? call(String? registration, String? password) {
+    if (registration == null || registration.length != 8) {
+      return 'Mátricula inválida';
+    } else if (password == null || password.length <= 6) {
+      return 'Senha inválida';
     } else {
-      return true;
+      return null;
     }
   }
 }

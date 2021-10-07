@@ -7,8 +7,8 @@ class AuthDatasourceImpl extends IAuthDatasouce {
 
   @override
   Future<UserModel> call(AuthModel model) async {
-    final response =
-        await _api.get(apiRequest: getUser(AuthModel.toMap(model)));
+    final response = await _api.get(
+        apiRequest: AuthRequests.getUser(AuthModel.toMap(model)));
     if (response.hasError) {
       throw ErrorResponse();
     } else {

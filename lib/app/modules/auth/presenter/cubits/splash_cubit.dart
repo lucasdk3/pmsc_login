@@ -8,7 +8,7 @@ class SplashCubit extends Cubit<SplashState> {
   final IStorageService _storage;
 
   Future<void> init() async {
-    await Future.delayed(const Duration(seconds: 3), () {
+    await Future.delayed(const Duration(seconds: 1), () {
       if (_storage.getToken() == null && _storage.getRefreshToken() == null) {
         emit(SplashState.error);
       } else {
